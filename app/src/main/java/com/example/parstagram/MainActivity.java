@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnCaptureImage;
     private ImageView ivPostImage;
     private Button btnSubmit;
+    private Button btnFeed;
     private File photoFile;
 
     @Override
@@ -57,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
+            }
+        });
+
+        btnFeed = findViewById(R.id.btnFeed);
+        btnFeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick feed button");
+                Intent intent = new Intent(MainActivity.this, FeedActivity.class);
+                startActivity(intent);
             }
         });
 
