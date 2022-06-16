@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="24sp"
         tools:text="rahul" />
 
     <ImageView
@@ -31,6 +32,5 @@
     <TextView
         android:id="@+id/tvCreatedAt"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="5hr" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

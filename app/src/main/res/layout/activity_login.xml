@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:orientation="vertical"
+    android:layout_gravity="center_vertical"
     tools:context=".LoginActivity">
+
+    <ImageView
+        android:id="@+id/ivNavLogo"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_weight="1"
+        android:paddingBottom="20dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
         android:id="@+id/etUsername"
@@ -14,6 +24,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:hint="username"
+        android:paddingBottom="20dp"
         tools:layout_editor_absoluteX="63dp"
         tools:layout_editor_absoluteY="25dp" />
 
@@ -25,6 +36,7 @@
         android:ems="10"
         android:hint="password"
         android:inputType="textPassword"
+        android:paddingBottom="20dp"
         tools:layout_editor_absoluteX="62dp"
         tools:layout_editor_absoluteY="96dp" />
 
@@ -33,7 +45,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Button"
+        android:paddingBottom="4dp"
+        android:text="LOG IN"
         tools:layout_editor_absoluteX="70dp"
-        tools:layout_editor_absoluteY="230dp" />
+        tools:layout_editor_absoluteY="230dp"
+        tools:text="LOG IN" />
+
+    <Button
+        android:id="@+id/btnSignup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="SIGNUP"
+        tools:text="SIGN UP" />
 </LinearLayout>

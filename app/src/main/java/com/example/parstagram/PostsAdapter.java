@@ -1,6 +1,8 @@
 package com.example.parstagram;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.parstagram.DetailsActivity;
+import com.example.parstagram.R;
+import com.example.parstagram.Post;
 import com.parse.ParseFile;
 
+import org.parceler.Parcels;
 import org.w3c.dom.Text;
 
 import java.util.Date;
@@ -59,7 +65,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView tvUsername;
         private ImageView ivImage;
         private TextView tvDescription;
@@ -71,6 +78,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ivImage = itemView.findViewById(R.id.ivImage);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Post post) {
@@ -84,6 +92,25 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             Date createdAt = post.getCreatedAt();
             String timeAgo = Post.calculateTimeAgo(createdAt);
             tvCreatedAt.setText(timeAgo);
+        }
+
+        // when the user clicks on a row, show MovieDetailsActivity for the selected movie
+        @Override
+        public void onClick(View v) {
+            Log.i("Adapter", "post clicked");
+            // gets item position
+            int position = getAdapterPosition();
+            // make sure the position is valid, i.e. actually exists in the view
+            if (position != RecyclerView.NO_POSITION) {
+                // get the movie at the position, this won't work if the class is static
+                Post post = posts.get(position);
+                // create intent for the new activity
+                Intent intent = new Intent(context, DetailsActivity.class);
+                // serialize the movie using parceler, use its short name as a key
+                intent.putExtra(Post.class.getSimpleName(), Parcels.wrap(post));
+                // show the activity
+                context.startActivity(intent);
+            }
         }
     }
 }
