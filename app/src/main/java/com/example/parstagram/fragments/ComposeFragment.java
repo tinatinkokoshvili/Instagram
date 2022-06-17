@@ -64,7 +64,6 @@ public class ComposeFragment extends Fragment {
     private ImageView ivPostImage;
     private Button btnSubmit;
     private Button btnFeed;
-//    MenuItem miActionProgressItem;
     private ImageView miActionProgress;
 
 
@@ -120,21 +119,9 @@ public class ComposeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         etDescription = view.findViewById(R.id.etDescription);
-       // btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
         ivPostImage = view.findViewById(R.id.ivPostImage);
         btnSubmit = view.findViewById(R.id.btnSubmit);
-        //btnLogout = view.findViewById(R.id.btnLogout);
-        //ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
         miActionProgress = view.findViewById(R.id.miActionProgress);
-
-//        btnFeed = view.findViewById(R.id.btnFeed);
-//            @Override
-//            public void onClick(View v) {
-//                Log.i(TAG, "onClick feed button");
-//                Intent intent = new Intent(getContext(), FeedActivity.class);
-//                startActivity(intent);
-//            }
-//        });
 
         ivPostImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,18 +147,6 @@ public class ComposeFragment extends Fragment {
             }
         });
 
-//        btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.i(TAG, "onClick logout button");
-//                ParseUser.logOutInBackground();
-//                ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
-//                Intent i = new Intent(getContext(), LoginActivity.class);
-//                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(i);
-//            }
-//        });
     }
 
     private void launchCamera() {
@@ -186,8 +161,6 @@ public class ComposeFragment extends Fragment {
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
         if (intent.resolveActivity(getContext().getPackageManager()) != null) {
             // Start the image capture intent to take photo
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -216,22 +189,6 @@ public class ComposeFragment extends Fragment {
         });
     }
 
-//    private void queryPosts() {
-//        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-//        query.include(Post.KEY_USER);
-//        query.findInBackground(new FindCallback<Post>() {
-//            @Override
-//            public void done(List<Post> posts, ParseException e) {
-//                if (e != null) {
-//                    Log.e(TAG, "Issue with getting posts", e);
-//                    return;
-//                }
-//                for (Post post : posts) {
-//                    Log.i(TAG, "Post: " + post.getDescription() + " username: " + post.getUser().getUsername());
-//                }
-//            }
-//        });
-//    }
 
     // Returns the File for a photo stored on disk given the fileName
     public File getPhotoFileUri(String fileName) {

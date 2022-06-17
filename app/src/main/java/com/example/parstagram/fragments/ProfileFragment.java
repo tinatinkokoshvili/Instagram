@@ -81,28 +81,6 @@ public class ProfileFragment extends PostsFragment {
         startActivity(i);
     }
 
-//    @Override
-//    public void queryPosts() {
-//        final IgPost.Query postQuery = new IgPost.Query();
-//        postQuery.getTop().withUser();
-//        postQuery.whereEqualTo(IgPost.KEY_USER, ParseUser.getCurrentUser());
-//        postQuery.findInBackground(new FindCallback<IgPost>() {
-//            @Override
-//            public void done(List<IgPost> objects, ParseException e) {
-//                if(e != null) {
-//                    Log.e(TAG, "Getting posts failed", e);
-//                    return;
-//                }
-//                postAdapter.clear();
-//                for(int i = 0; i < objects.size(); i++) {
-//                    allPosts.add(objects.get(i));
-//                    postAdapter.notifyItemInserted(allPosts.size() - 1);
-//                }
-//                tvNumPosts.setText(allPosts.size() + " Posts");
-//            }
-//        });
-//    }
-
 
     @Override
     protected void queryPosts() {

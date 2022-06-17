@@ -58,22 +58,6 @@ public class IgPost extends ParseObject {
 
     public int getLikes() { return getInt(KEY_LIKES); }
 
-    //query of Post class
-    public static class Query extends ParseQuery<IgPost> {
-        public Query() {
-            super(IgPost.class);
-        }
-
-        public Query getTop() {
-            setLimit(20);
-            return this;
-        }
-
-        public Query withUser() {
-            include("user");
-            return this;
-        }
-    }
 
     public static String calculateTimeAgo(Date createdAt) {
 

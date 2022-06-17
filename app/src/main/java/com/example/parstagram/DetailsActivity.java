@@ -33,10 +33,6 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView tvLikes;
     private ImageView ivComment;
 
-//    private TextView tvDetailsDescription;
-//    private TextView tvDetailsUsername;
-//    private TextView tvTimeAgo;
-//    private ImageView ivDetailsImage;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,25 +80,6 @@ public class DetailsActivity extends AppCompatActivity {
         String timeAgo = IgPost.calculateTimeAgo(createdAt);
         tvCreatedAt.setText(timeAgo);
 
-//        tvDetailsDescription = findViewById(R.id.tvDetailsDescription);
-//        tvDetailsUsername = findViewById(R.id.tvDetailsUsername);
-//        tvTimeAgo = findViewById(R.id.tvTimeAgo);
-//        ivDetailsImage = findViewById(R.id.ivDetailsImage);
-//
-
-//
-//        Log.i(TAG, post.getDescription().toString());
-//        tvDetailsDescription.setText(post.getDescription());
-//        tvDetailsUsername.setText(post.getUser().getUsername());
-//        Date createdAt = post.getCreatedAt();
-//        String timeAgo = IgPost.calculateTimeAgo(createdAt);
-//        tvTimeAgo.setText(timeAgo);
-//
-//        //If image is app is in landscape mode, use backdrop image path
-//        ParseFile image = post.getImage();
-//        if (image != null) {
-//            Glide.with(this).load(image.getUrl()).into(ivDetailsImage);
-//        }
     }
 
 

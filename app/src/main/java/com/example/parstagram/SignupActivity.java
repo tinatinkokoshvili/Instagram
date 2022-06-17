@@ -57,7 +57,6 @@ public class SignupActivity extends AppCompatActivity {
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 signupUser(email, fullName, username, password);
-
             }
         });
 
@@ -86,10 +85,7 @@ public class SignupActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
-
 
     private void loginUser(String username, String password) {
         Log.i(TAG, "Attempting to login user " + username);

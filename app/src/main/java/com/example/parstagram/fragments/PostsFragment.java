@@ -131,40 +131,9 @@ public class PostsFragment extends Fragment {
 
         // set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
-        // set the layout manager on the recycler view
-        //rvPosts.setLayoutManager(LinearLayoutManager(getContext()));
-        // query posts from Parstagram
-        //queryPosts();
+
     }
 
-//    public void loadNextData(Date lastDate) {
-//        queryPosts();
-//    }
-//
-//    public void queryPosts() {
-//
-//        final IgPost.Query postQuery = new IgPost.Query();
-//        postQuery.getTop().withUser();
-//        postQuery.addDescendingOrder(IgPost.KEY_DATE);
-//
-//        postQuery.findInBackground(new FindCallback<IgPost>() {
-//            @Override
-//            public void done(List<IgPost> objects, ParseException e) {
-//                if(e == null) {
-//                    adapter.clear();
-//                    for(int i = 0; i < objects.size(); i++) {
-//                        allPosts.add(objects.get(i));
-//                        adapter.notifyItemInserted(allPosts.size() - 1);
-//                    }
-//                } else {
-//                    Log.i(TAG, "error while querying");
-//                }
-//                swipeContainer.setRefreshing(false);
-//            }
-//        });
-//    }
-
-//
 
     public void loadNextData(Date date) {
         // specify what type of data we want to query - Post.class
@@ -236,13 +205,9 @@ public class PostsFragment extends Fragment {
     protected void queryPosts() {
         // specify what type of data we want to query - Post.class
         ParseQuery<IgPost> query = ParseQuery.getQuery(IgPost.class);
-        // include data referred by user key
         query.include(IgPost.KEY_USER);
-        // limit query to latest 20 items
         query.setLimit(20);
-        // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
-        // start an asynchronous call for posts
         query.findInBackground(new FindCallback<IgPost>() {
             @Override
             public void done(List<IgPost> posts, ParseException e) {
@@ -251,11 +216,6 @@ public class PostsFragment extends Fragment {
                     Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
-
-                // for debugging purposes let's print every post description to logcat
-//                for (IgPost post : posts) {
-//                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-//                }
 
                 // save received posts to list and notify adapter of new data
                 allPosts.addAll(posts);
