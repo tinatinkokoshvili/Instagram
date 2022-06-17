@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import com.example.parstagram.fragments.ComposeFragment;
 import com.example.parstagram.fragments.PostsFragment;
+import com.example.parstagram.fragments.ProfileFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -46,13 +48,17 @@ public class MainActivity extends AppCompatActivity {
     private File photoFile;
     public String photoFileName = "photo.jpg";
 
+
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private BottomNavigationView bottomNavigationView;
+    public BottomNavigationItemView action_home;
+    public MenuItem miActionProgressItem;
 
 //    @Override
 //    public boolean onPrepareOptionsMenu(Menu menu) {
 //        return super.onPrepareOptionsMenu(menu);
 //    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,25 +66,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setActionBarIcon();
 
+        action_home = findViewById(R.id.action_home);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.action_home:
+                      //  action_home.setIcon(R.drawable.ic_baseline_person_24);
                         fragment = new PostsFragment();
                         break;
                     case R.id.action_compose:
                         fragment = new ComposeFragment();
                         break;
-                    case R.id.action_profile:
-                        fragment = new ComposeFragment();
                     default:
-                        fragment = new ComposeFragment();
+                        fragment = new ProfileFragment();
                         break;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
@@ -97,23 +101,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     public void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.drawable.nav_logo_whiteout);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
-
-        // Define ColorDrawable object and parse color
-        // using parseColor method
-        // with color hash code as its parameter
         ColorDrawable colorDrawable
                 = new ColorDrawable(Color.parseColor("#FFFFFF"));
-
-        // Set BackgroundDrawable
         actionBar.setBackgroundDrawable(colorDrawable);
-
     }
+
+
 
 //    private void launchCamera() {
 //        // create Intent to take a picture and return control to the calling application

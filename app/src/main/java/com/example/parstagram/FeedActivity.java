@@ -2,6 +2,7 @@ package com.example.parstagram;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,8 +21,9 @@ public class FeedActivity extends AppCompatActivity {
     private static final String TAG = "FeedActivity";
     private RecyclerView rvPosts;
     protected PostsAdapter adapter;
-    protected List<Post> allPosts;
+    protected List<IgPost> allPosts;
     private SwipeRefreshLayout swipeContainer;
+
 
 
     @Override
@@ -44,6 +46,8 @@ public class FeedActivity extends AppCompatActivity {
         // initialize the array that will hold posts and create a PostsAdapter
         allPosts = new ArrayList<>();
         adapter = new PostsAdapter(this, allPosts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvPosts.setLayoutManager(linearLayoutManager);
 
         // set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
@@ -52,6 +56,8 @@ public class FeedActivity extends AppCompatActivity {
         // query posts from Parstagram
         //queryPosts();
     }
+
+
 
 //    public void fetchTimelineAsync(int page) {
 //        // specify what type of data we want to query - Post.class

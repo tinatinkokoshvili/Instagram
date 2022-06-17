@@ -5,6 +5,7 @@ import android.util.Log;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcel;
@@ -12,15 +13,17 @@ import org.parceler.Parcel;
 import java.util.Date;
 
 
-@ParseClassName("Post")
-@Parcel(analyze = Post.class)
-public class Post extends ParseObject {
+@ParseClassName("IgPost")
+@Parcel(analyze = IgPost.class)
+public class IgPost extends ParseObject {
 
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_USER = "user";
+    public static final String KEY_DATE = "createdAt";
+    public static final String KEY_LIKES = "likes";
 
-    public Post() {}
+    public IgPost() {}
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -44,6 +47,32 @@ public class Post extends ParseObject {
 
     public void setUser(ParseUser user) {
         put(KEY_USER, user);
+    }
+
+    public void incrementLikes() {
+        int newCount = getInt(KEY_LIKES)+1;
+        Log.i("likescount", "count" + newCount);
+        put(KEY_LIKES, newCount);
+        Log.i("likescount", "done " + getLikes());
+    }
+
+    public int getLikes() { return getInt(KEY_LIKES); }
+
+    //query of Post class
+    public static class Query extends ParseQuery<IgPost> {
+        public Query() {
+            super(IgPost.class);
+        }
+
+        public Query getTop() {
+            setLimit(20);
+            return this;
+        }
+
+        public Query withUser() {
+            include("user");
+            return this;
+        }
     }
 
     public static String calculateTimeAgo(Date createdAt) {

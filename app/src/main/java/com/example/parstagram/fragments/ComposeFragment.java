@@ -2,14 +2,17 @@ package com.example.parstagram.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -17,6 +20,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,7 +32,7 @@ import android.widget.Toast;
 import com.example.parstagram.FeedActivity;
 import com.example.parstagram.LoginActivity;
 import com.example.parstagram.MainActivity;
-import com.example.parstagram.Post;
+import com.example.parstagram.IgPost;
 import com.example.parstagram.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -59,6 +64,10 @@ public class ComposeFragment extends Fragment {
     private ImageView ivPostImage;
     private Button btnSubmit;
     private Button btnFeed;
+//    MenuItem miActionProgressItem;
+    private ImageView miActionProgress;
+
+
 
     private File photoFile;
     public String photoFileName = "photo.jpg";
@@ -105,28 +114,29 @@ public class ComposeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_compose, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         etDescription = view.findViewById(R.id.etDescription);
-        btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
+       // btnCaptureImage = view.findViewById(R.id.btnCaptureImage);
         ivPostImage = view.findViewById(R.id.ivPostImage);
         btnSubmit = view.findViewById(R.id.btnSubmit);
-        btnLogout = view.findViewById(R.id.btnLogout);
-        ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
+        //btnLogout = view.findViewById(R.id.btnLogout);
+        //ivPostImage = (ImageView) view.findViewById(R.id.ivPostImage);
+        miActionProgress = view.findViewById(R.id.miActionProgress);
 
-        btnFeed = view.findViewById(R.id.btnFeed);
-        btnFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick feed button");
-                Intent intent = new Intent(getContext(), FeedActivity.class);
-                startActivity(intent);
-            }
-        });
+//        btnFeed = view.findViewById(R.id.btnFeed);
+//            @Override
+//            public void onClick(View v) {
+//                Log.i(TAG, "onClick feed button");
+//                Intent intent = new Intent(getContext(), FeedActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
-        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
+        ivPostImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchCamera();
@@ -150,18 +160,18 @@ public class ComposeFragment extends Fragment {
             }
         });
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick logout button");
-                ParseUser.logOutInBackground();
-                ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
-                Intent i = new Intent(getContext(), LoginActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-            }
-        });
+//        btnLogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.i(TAG, "onClick logout button");
+//                ParseUser.logOutInBackground();
+//                ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
+//                Intent i = new Intent(getContext(), LoginActivity.class);
+//                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(i);
+//            }
+//        });
     }
 
     private void launchCamera() {
@@ -185,7 +195,8 @@ public class ComposeFragment extends Fragment {
     }
 
     private void savePost(String description, ParseUser currentUser, File photoFile) {
-        Post post = new Post();
+        miActionProgress.setVisibility(View.VISIBLE);
+        IgPost post = new IgPost();
         post.setDescription(description);
         post.setImage(new ParseFile(photoFile));
         post.setUser(currentUser);
@@ -195,10 +206,12 @@ public class ComposeFragment extends Fragment {
                 if (e != null) {
                     Log.e(TAG, "error while saving");
                     Toast.makeText(getContext(), "error while saving", Toast.LENGTH_SHORT).show();
+                    miActionProgress.setVisibility(View.GONE);
                 }
                 Log.i(TAG, "Post save was successful!!");
                 etDescription.setText("");
                 ivPostImage.setImageResource(0);
+                miActionProgress.setVisibility(View.GONE);
             }
         });
     }
@@ -244,22 +257,14 @@ public class ComposeFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                // RESIZE BITMAP
-                // See code above
-//                Uri takenPhotoUri = Uri.fromFile(getPhotoFileUri(photoFileName));
-//                // by this point we have the camera photo on disk
-//                Bitmap rawTakenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
-//                // See BitmapScaler.java: https://gist.github.com/nesquena/3885707fd3773c09f1bb
-//                Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(rawTakenImage, SOME_WIDTH);
-                // Load the taken image into a preview
-
                 ivPostImage.setImageBitmap(takenImage);
-            } else { // Result was a failure
+            } else {
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
 
     }
+
 }
 
 

@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.example.parstagram.Post;
+import com.example.parstagram.EndlessRecyclerViewScrollListener;
+import com.example.parstagram.IgPost;
 import com.example.parstagram.PostsAdapter;
 import com.example.parstagram.R;
 import com.parse.FindCallback;
@@ -22,6 +24,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,8 +37,9 @@ public class PostsFragment extends Fragment {
     private static final String TAG = "PostsFragment";
     private RecyclerView rvPosts;
     protected PostsAdapter adapter;
-    protected List<Post> allPosts;
+    protected List<IgPost> allPosts;
     private SwipeRefreshLayout swipeContainer;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -88,7 +92,6 @@ public class PostsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -96,11 +99,31 @@ public class PostsFragment extends Fragment {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                fetchTimelineAsync(0);
+                queryPosts();
+                //fetchTimelineAsync(0);
             }
         });
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        queryPosts();
 
         rvPosts = view.findViewById(R.id.rvPosts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rvPosts.setLayoutManager(linearLayoutManager);
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                IgPost lastPost = allPosts.get(allPosts.size()-1);
+                Log.i(TAG, "last post " + lastPost);
+                loadNextData(lastPost.getCreatedAt());
+//                loadNextData(page);
+            }
+        };
+        rvPosts.addOnScrollListener(scrollListener);
 
         // initialize the array that will hold posts and create a PostsAdapter
         allPosts = new ArrayList<>();
@@ -109,25 +132,88 @@ public class PostsFragment extends Fragment {
         // set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
         // set the layout manager on the recycler view
-        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        //rvPosts.setLayoutManager(LinearLayoutManager(getContext()));
         // query posts from Parstagram
-        queryPosts();
+        //queryPosts();
     }
 
+//    public void loadNextData(Date lastDate) {
+//        queryPosts();
+//    }
+//
+//    public void queryPosts() {
+//
+//        final IgPost.Query postQuery = new IgPost.Query();
+//        postQuery.getTop().withUser();
+//        postQuery.addDescendingOrder(IgPost.KEY_DATE);
+//
+//        postQuery.findInBackground(new FindCallback<IgPost>() {
+//            @Override
+//            public void done(List<IgPost> objects, ParseException e) {
+//                if(e == null) {
+//                    adapter.clear();
+//                    for(int i = 0; i < objects.size(); i++) {
+//                        allPosts.add(objects.get(i));
+//                        adapter.notifyItemInserted(allPosts.size() - 1);
+//                    }
+//                } else {
+//                    Log.i(TAG, "error while querying");
+//                }
+//                swipeContainer.setRefreshing(false);
+//            }
+//        });
+//    }
 
-    public void fetchTimelineAsync(int page) {
+//
+
+    public void loadNextData(Date date) {
         // specify what type of data we want to query - Post.class
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        ParseQuery<IgPost> query = ParseQuery.getQuery(IgPost.class);
         // include data referred by user key
-        query.include(Post.KEY_USER);
+        query.include(IgPost.KEY_USER);
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
+
+        query.whereLessThan("createdAt", date);
         // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<Post>() {
+        query.findInBackground(new FindCallback<IgPost>() {
             @Override
-            public void done(List<Post> posts, ParseException e) {
+            public void done(List<IgPost> feed, com.parse.ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+
+                // for debugging purposes let's print every post description to logcat
+                for (IgPost post : feed) {
+                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
+                }
+
+                // save received posts to list and notify adapter of new data
+                allPosts.addAll(feed);
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+
+    public void fetchTimelineAsync(Date lastDate) {
+        // specify what type of data we want to query - Post.class
+        ParseQuery<IgPost> query = ParseQuery.getQuery(IgPost.class);
+        // include data referred by user key
+        query.include(IgPost.KEY_USER);
+        // limit query to latest 20 items
+        query.setLimit(20);
+        // order posts by creation date (newest first)
+        query.addDescendingOrder("createdAt");
+        query.whereLessThan("createdAt", lastDate);
+        // start an asynchronous call for posts
+        query.findInBackground(new FindCallback<IgPost>() {
+            @Override
+            public void done(List<IgPost> posts, ParseException e) {
                 // check for errors
                 if (e != null) {
                     Log.e(TAG, "Issue with getting posts", e);
@@ -135,7 +221,7 @@ public class PostsFragment extends Fragment {
                 }
                 adapter.clear();
                 // for debugging purposes let's print every post description to logcat
-                for (Post post : posts) {
+                for (IgPost post : posts) {
                     Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
                 }
 
@@ -146,20 +232,20 @@ public class PostsFragment extends Fragment {
             }
         });
     }
-
-    private void queryPosts() {
+//
+    protected void queryPosts() {
         // specify what type of data we want to query - Post.class
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        ParseQuery<IgPost> query = ParseQuery.getQuery(IgPost.class);
         // include data referred by user key
-        query.include(Post.KEY_USER);
+        query.include(IgPost.KEY_USER);
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<Post>() {
+        query.findInBackground(new FindCallback<IgPost>() {
             @Override
-            public void done(List<Post> posts, ParseException e) {
+            public void done(List<IgPost> posts, ParseException e) {
                 // check for errors
                 if (e != null) {
                     Log.e(TAG, "Issue with getting posts", e);
@@ -167,14 +253,16 @@ public class PostsFragment extends Fragment {
                 }
 
                 // for debugging purposes let's print every post description to logcat
-                for (Post post : posts) {
-                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-                }
+//                for (IgPost post : posts) {
+//                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
+//                }
 
                 // save received posts to list and notify adapter of new data
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
             }
         });
+
     }
 }

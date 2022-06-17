@@ -51,6 +51,15 @@ public class LoginActivity extends AppCompatActivity  {
         btnSignUp.setBackgroundColor(Color.parseColor("#089c14"));
         btnSignUp.setTextColor(Color.WHITE);
 
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         ImageView imgView = (ImageView) findViewById(R.id.ivNavLogo);
         imgView.setImageResource(R.drawable.nav_logo_whiteout);
     }
@@ -71,8 +80,8 @@ public class LoginActivity extends AppCompatActivity  {
     }
 
     private void goMainActivity() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 }
